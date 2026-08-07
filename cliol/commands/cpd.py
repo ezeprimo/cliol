@@ -104,7 +104,8 @@ def cpd_commissions(
     """Calcula las comisiones de una operación CPD."""
     output_flags(json, csv, verbose, debug)
     with IOLClientWrapper(ConfigManager(), verbose=verbose, debug=debug) as client:
-        data = client.dispatch("get_cpd_commissions", importe=importe, plazo=plazo, tasa=tasa)
+        # Use raw variant — py_iol's ComisionesCPD.from_dict has a str+float bug
+        data = client.dispatch("get_cpd_commissions_raw", importe=importe, plazo=plazo, tasa=tasa)
     print(OutputFormatter.render(data, columns=COMMISSIONS_COLUMNS))
 
 
