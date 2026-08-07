@@ -23,15 +23,12 @@ CPD_COLUMNS = {
     "fecha_vencimiento": "Vencimiento",
 }
 COMMISSIONS_COLUMNS = {
-    "importe": "Importe",
-    "plazo": "Plazo",
-    "tasa": "Tasa %",
+    "montoInversion": "Inversión",
     "comision": "Comisión",
-    "iva_comision": "IVA comisión",
-    "derechos_mercado": "Derechos",
-    "iva_derechos": "IVA derechos",
-    "total_gastos": "Total gastos",
-    "monto_neto": "Neto",
+    "derechoMercado": "Derechos",
+    "ivaComision": "IVA comisión",
+    "ivaDerechoMercado": "IVA derechos",
+    "montoTotalInversion": "Total",
 }
 RESULT_COLUMNS = {
     "ok": "OK",
