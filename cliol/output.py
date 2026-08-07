@@ -126,6 +126,7 @@ class OutputFormatter:
     @staticmethod
     def json(data) -> str:
         """JSON indentado; dataclasses y objetos se serializan con default=str."""
+
         def _serializer(obj):
             if isinstance(obj, (datetime, date)):
                 return obj.isoformat()
@@ -134,7 +135,10 @@ class OutputFormatter:
         if is_dataclass(data) and not isinstance(data, type):
             data = asdict(data)
         elif isinstance(data, list):
-            data = [asdict(item) if is_dataclass(item) and not isinstance(item, type) else item for item in data]
+            data = [
+                asdict(item) if is_dataclass(item) and not isinstance(item, type) else item
+                for item in data
+            ]
         return json.dumps(data, ensure_ascii=False, indent=2, default=_serializer)
 
     @staticmethod

@@ -4,7 +4,18 @@ from typer.testing import CliRunner
 
 from cliol.main import app
 
-GROUPS = ["market", "portfolio", "fci", "mep", "cpd", "trading", "advisor", "auth", "config", "security"]
+GROUPS = [
+    "market",
+    "portfolio",
+    "fci",
+    "mep",
+    "cpd",
+    "trading",
+    "advisor",
+    "auth",
+    "config",
+    "security",
+]
 
 
 def test_root_help_lists_all_groups():
@@ -22,7 +33,16 @@ def test_root_help_lists_setup_command():
 def test_group_help_lists_subcommands():
     result = CliRunner().invoke(app, ["market", "--help"])
     assert result.exit_code == 0
-    for sub in ["quote", "data", "options", "instruments", "massive", "panel", "detail", "mep-rate"]:
+    for sub in [
+        "quote",
+        "data",
+        "options",
+        "instruments",
+        "massive",
+        "panel",
+        "detail",
+        "mep-rate",
+    ]:
         assert sub in result.output
 
 

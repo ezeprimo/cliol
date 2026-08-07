@@ -38,7 +38,9 @@ RESULT_COLUMNS = {
     "monto_dolares": "Dólares",
     "tipo_cambio": "Tipo",
 }
-ESTIMATE_SUGGESTION = "Use 'cliol mep estimate-buy {monto}' para ver el costo estimado antes de operar."
+ESTIMATE_SUGGESTION = (
+    "Use 'cliol mep estimate-buy {monto}' para ver el costo estimado antes de operar."
+)
 
 
 @mep_app.command("estimate-buy")
@@ -103,9 +105,7 @@ def mep_validate(
     """Valida una operación MEP sin ejecutarla (no pide contraseña)."""
     output_flags(json, csv, verbose, debug)
     with IOLClientWrapper(ConfigManager(), verbose=verbose, debug=debug) as client:
-        data = client.dispatch(
-            "validate_mep_operation", monto=monto, id_tipo_operatoria=op_type
-        )
+        data = client.dispatch("validate_mep_operation", monto=monto, id_tipo_operatoria=op_type)
     print(OutputFormatter.render(data, columns=VALIDATION_COLUMNS))
 
 

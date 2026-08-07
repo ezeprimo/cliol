@@ -35,7 +35,14 @@ def test_exit_codes_per_spec(exc_cls, expected_code):
 
 
 def test_all_are_cliol_error_subclasses():
-    for cls in (ConfigError, APIError, NetworkError, AuthError, WrongSpendingPassword, TradingDisabled):
+    for cls in (
+        ConfigError,
+        APIError,
+        NetworkError,
+        AuthError,
+        WrongSpendingPassword,
+        TradingDisabled,
+    ):
         assert issubclass(cls, CliolError)
 
 
@@ -46,4 +53,7 @@ def test_message_passed_through_str():
 
 
 def test_wrong_spending_password_message():
-    assert str(WrongSpendingPassword("Contraseña de gastos incorrecta.")) == "Contraseña de gastos incorrecta."
+    assert (
+        str(WrongSpendingPassword("Contraseña de gastos incorrecta."))
+        == "Contraseña de gastos incorrecta."
+    )

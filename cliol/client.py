@@ -5,7 +5,6 @@ traduce errores de py_iol a la jerarquía CliolError y despacha entre métodos
 tipados y variantes `_raw()` según el formato de salida global (`--json`).
 """
 
-
 try:  # httpx es dependencia de py_iol; puede no estar importable en algunos entornos
     import httpx
 except ModuleNotFoundError:  # pragma: no cover
@@ -80,7 +79,9 @@ class IOLClientWrapper:
     def _get_client(self):
         username, password = self.get_credentials()
         if self._verbose:
-            self._log(f"Autenticando contra IOL con usuario {username!r} (token en memoria, 14.5 min)…")
+            self._log(
+                f"Autenticando contra IOL con usuario {username!r} (token en memoria, 14.5 min)…"
+            )
         if self._debug:
             self._log(self.config.redact(self.config.load()))
         return IOLClient(username, password)

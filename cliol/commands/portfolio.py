@@ -66,7 +66,9 @@ def resolve_country(value: str) -> str:
 def resolve_state(value: str) -> str:
     canonical = normalize_choice(value, OPERATION_STATES)
     if canonical is None:
-        raise CliolError(f"Estado inválido: {value}. Valores válidos: {', '.join(OPERATION_STATES)}")
+        raise CliolError(
+            f"Estado inválido: {value}. Valores válidos: {', '.join(OPERATION_STATES)}"
+        )
     return canonical
 
 
@@ -157,7 +159,9 @@ def operations_list(
     csv: bool = CSV_OPTION,
     verbose: bool = VERBOSE_OPTION,
     debug: bool = DEBUG_OPTION,
-    state: str = typer.Option(None, "--state", help="Estado (todas|pendientes|terminadas|canceladas)"),
+    state: str = typer.Option(
+        None, "--state", help="Estado (todas|pendientes|terminadas|canceladas)"
+    ),
     from_date: str = typer.Option(None, "--from", help="Fecha desde (YYYY-MM-DD)"),
     to_date: str = typer.Option(None, "--to", help="Fecha hasta (YYYY-MM-DD)"),
 ):

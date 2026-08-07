@@ -10,9 +10,13 @@ from cliol.prompts import confirm
 from cliol.security import SpendingPassword
 
 config_app = typer.Typer(help="Lee y escribe la configuración de cliol.", no_args_is_help=True)
-trading_app = typer.Typer(help="Activa, desactiva o consulta el modo operatoria.", no_args_is_help=True)
+trading_app = typer.Typer(
+    help="Activa, desactiva o consulta el modo operatoria.", no_args_is_help=True
+)
 
-ENABLE_NO_PASSWORD = "Debe configurar una contraseña de gastos primero. Use 'cliol security set-password'."
+ENABLE_NO_PASSWORD = (
+    "Debe configurar una contraseña de gastos primero. Use 'cliol security set-password'."
+)
 ENABLED_MESSAGE = "Modo operatoria habilitado."
 ALREADY_ENABLED_MESSAGE = "El modo operatoria ya está habilitado."
 ALREADY_DISABLED_MESSAGE = "El modo operatoria ya está deshabilitado."

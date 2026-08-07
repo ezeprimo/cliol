@@ -49,9 +49,7 @@ SUGGESTION = "Use 'cliol cpd commissions' para ver las comisiones antes de opera
 def _resolve(value, choices, kind) -> str:
     canonical = normalize_choice(value, choices)
     if canonical is None:
-        raise CliolError(
-            f"{kind} inválido: {value}. Valores válidos: {', '.join(choices)}"
-        )
+        raise CliolError(f"{kind} inválido: {value}. Valores válidos: {', '.join(choices)}")
     return canonical
 
 

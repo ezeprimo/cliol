@@ -70,7 +70,9 @@ def test_dispatch_passes_kwargs_through(config_manager, fake_iol):
     set_format("table")
     try:
         wrapper = IOLClientWrapper(config_manager)
-        result = wrapper.dispatch("get_stock_quote", symbol="PAMP", market="nYSE", settlement_term="t2")
+        result = wrapper.dispatch(
+            "get_stock_quote", symbol="PAMP", market="nYSE", settlement_term="t2"
+        )
         assert result["market"] == "nYSE"
         assert result["term"] == "t2"
     finally:

@@ -10,7 +10,9 @@ from cliol.security import SpendingPassword
 
 security_app = typer.Typer(help="Contraseña de gastos para operar.", no_args_is_help=True)
 
-ALREADY_EXISTS = "Ya existe una contraseña de gastos. Use 'cliol security change-password' para modificarla."
+ALREADY_EXISTS = (
+    "Ya existe una contraseña de gastos. Use 'cliol security change-password' para modificarla."
+)
 NOT_SET_YET = "No existe una contraseña de gastos. Use 'cliol security set-password'."
 SET_OK = "Contraseña de gastos configurada."
 CHANGE_OK = "Contraseña de gastos actualizada."

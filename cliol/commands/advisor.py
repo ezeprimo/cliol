@@ -12,7 +12,9 @@ from cliol.output import OutputFormatter
 from cliol.prompts import ask_int
 from cliol.trading_gate import TradingGate
 
-advisor_app = typer.Typer(help="Asesor de inversiones: perfil, movimientos y ventas.", no_args_is_help=True)
+advisor_app = typer.Typer(
+    help="Asesor de inversiones: perfil, movimientos y ventas.", no_args_is_help=True
+)
 
 MOVEMENTS_COLUMNS = {
     "fecha": "Fecha",
@@ -54,7 +56,9 @@ def _parse_answers(raw: str) -> list:
     except json.JSONDecodeError as exc:
         raise CliolError("El JSON de --answers no es válido.") from exc
     if not isinstance(data, list):
-        raise CliolError("--answers debe ser una lista de objetos {'idPregunta':..., 'idRespuesta':...}.")
+        raise CliolError(
+            "--answers debe ser una lista de objetos {'idPregunta':..., 'idRespuesta':...}."
+        )
     clean = []
     for item in data:
         if not isinstance(item, dict) or "idPregunta" not in item or "idRespuesta" not in item:
@@ -150,7 +154,7 @@ def advisor_calculate_profile(
     answers: str = typer.Option(
         None,
         "--answers",
-        help="Respuestas JSON: '[{\"idPregunta\":1,\"idRespuesta\":2}]' (si se omite, test interactivo)",
+        help='Respuestas JSON: \'[{"idPregunta":1,"idRespuesta":2}]\' (si se omite, test interactivo)',
     ),
 ):
     """Calcula el perfil de inversor a partir del test (no lo guarda)."""
@@ -190,7 +194,9 @@ def advisor_save_profile(
             test = client.dispatch("get_investor_test_questions")
         respuestas = _ask_test(test)
     with IOLClientWrapper(config, verbose=verbose, debug=debug) as client:
-        profile = client.dispatch("save_investor_profile", id_cliente=client_id, respuestas=respuestas)
+        profile = client.dispatch(
+            "save_investor_profile", id_cliente=client_id, respuestas=respuestas
+        )
     _print_profile(profile)
     print(PROFILE_DONE.format(perfil=getattr(profile, "descripcion", "?"), cliente=client_id))
 

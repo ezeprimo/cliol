@@ -1,6 +1,5 @@
 """Unit tests for constants derived from py_iol and the choice normalizer."""
 
-
 from cliol.constants import (
     COUNTRIES,
     CPD_SEGMENTS,
@@ -15,7 +14,8 @@ from cliol.constants import (
 def _pyiol_values(cls):
     """Extract string constant values from a py_iol class, excluding dunders and docstrings."""
     return sorted(
-        v for k, v in vars(cls).items()
+        v
+        for k, v in vars(cls).items()
         if isinstance(v, str) and not k.startswith("__") and " " not in v
     )
 

@@ -17,7 +17,9 @@ OVERWRITE_WARNING = "Ya existe una configuración. Se sobrescribirán las creden
 TRADING_RISK_WARNING = (
     "AVISO: la operatoria REAL genera órdenes que impactan su cuenta de Invertir Online."
 )
-CONSULT_MODE_MESSAGE = "Modo consulta activado. Puede habilitar operatoria luego con 'cliol config trading enable'."
+CONSULT_MODE_MESSAGE = (
+    "Modo consulta activado. Puede habilitar operatoria luego con 'cliol config trading enable'."
+)
 SAVED_MESSAGE = "Configuración guardada."
 
 

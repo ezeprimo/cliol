@@ -53,9 +53,7 @@ def fci_list(
     with IOLClientWrapper(ConfigManager(), verbose=verbose, debug=debug) as client:
         data = client.dispatch("get_fci_list")
     print(
-        OutputFormatter.render(
-            data, columns=FCI_LIST_COLUMNS, color_columns=("variacion_diaria",)
-        )
+        OutputFormatter.render(data, columns=FCI_LIST_COLUMNS, color_columns=("variacion_diaria",))
     )
 
 
@@ -141,9 +139,7 @@ def fci_subscribe(
     config = ConfigManager()
     _fci_gate(config, validate)
     with IOLClientWrapper(config, verbose=verbose, debug=debug) as client:
-        data = client.dispatch(
-            "subscribe_fci", simbolo=symbol, monto=monto, solo_validar=validate
-        )
+        data = client.dispatch("subscribe_fci", simbolo=symbol, monto=monto, solo_validar=validate)
     print(OutputFormatter.render(data, columns=RESULT_COLUMNS))
 
 

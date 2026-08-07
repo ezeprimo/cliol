@@ -27,7 +27,9 @@ def test_check_raises_trading_disabled_when_disabled(tmp_path):
     gate = _gate(tmp_path, enabled=False, password="clave1")
     with pytest.raises(TradingDisabled) as exc:
         gate.check()
-    assert "Operatoria deshabilitada. Para operar, ejecute: cliol config trading enable" in str(exc.value)
+    assert "Operatoria deshabilitada. Para operar, ejecute: cliol config trading enable" in str(
+        exc.value
+    )
 
 
 def test_prompt_password_accepts_correct(tmp_path, monkeypatch):

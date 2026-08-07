@@ -37,15 +37,17 @@ def _gate(config) -> TradingGate:
 
 def _order_summary(action: str, cantidad: int, symbol: str, precio: float, market: str, term: str):
     total = cantidad * precio
-    print(OPERATION_HINT.format(
-        action=action,
-        cantidad=cantidad,
-        symbol=symbol,
-        precio=precio,
-        total=total,
-        market=market,
-        term=term,
-    ))
+    print(
+        OPERATION_HINT.format(
+            action=action,
+            cantidad=cantidad,
+            symbol=symbol,
+            precio=precio,
+            total=total,
+            market=market,
+            term=term,
+        )
+    )
 
 
 @trading_app.command("buy")

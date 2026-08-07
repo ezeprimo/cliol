@@ -32,7 +32,8 @@ def _values(cls) -> list:
     y son strings. Esto excluye __module__, __doc__, y docstrings de clase.
     """
     return [
-        v for k, v in vars(cls).items()
+        v
+        for k, v in vars(cls).items()
         if isinstance(v, str) and not k.startswith("__") and " " not in v
     ]
 

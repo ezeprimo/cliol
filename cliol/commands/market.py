@@ -14,7 +14,9 @@ from cliol.errors import APIError, CliolError
 from cliol.options import CSV_OPTION, DEBUG_OPTION, JSON_OPTION, VERBOSE_OPTION, output_flags
 from cliol.output import OutputFormatter
 
-market_app = typer.Typer(help="Datos de mercado: cotizaciones e instrumentos (solo consulta).", no_args_is_help=True)
+market_app = typer.Typer(
+    help="Datos de mercado: cotizaciones e instrumentos (solo consulta).", no_args_is_help=True
+)
 
 QUOTE_COLUMNS = {
     "simbolo": "Símbolo",
@@ -181,7 +183,9 @@ def market_massive(
     csv: bool = CSV_OPTION,
     verbose: bool = VERBOSE_OPTION,
     debug: bool = DEBUG_OPTION,
-    instrument: str = typer.Option("acciones", "--instrument", help="Tipo de instrumento (default: acciones)"),
+    instrument: str = typer.Option(
+        "acciones", "--instrument", help="Tipo de instrumento (default: acciones)"
+    ),
     country: str = typer.Option("argentina", "--country", help="País (default: argentina)"),
 ):
     """Cotizaciones masivas por tipo de instrumento."""
@@ -190,7 +194,11 @@ def market_massive(
     with IOLClientWrapper(ConfigManager(), verbose=verbose, debug=debug) as client:
         data = client.dispatch("get_massive_quotes", instrumento=instrument, pais=country)
     titulos = data.titulos if hasattr(data, "titulos") else data
-    print(OutputFormatter.render(titulos, columns=MASSIVE_COLUMNS, color_columns=("variacion_porcentual",)))
+    print(
+        OutputFormatter.render(
+            titulos, columns=MASSIVE_COLUMNS, color_columns=("variacion_porcentual",)
+        )
+    )
 
 
 @market_app.command("panel")
@@ -200,16 +208,24 @@ def market_panel(
     csv: bool = CSV_OPTION,
     verbose: bool = VERBOSE_OPTION,
     debug: bool = DEBUG_OPTION,
-    instrument: str = typer.Option("acciones", "--instrument", help="Tipo de instrumento (default: acciones)"),
+    instrument: str = typer.Option(
+        "acciones", "--instrument", help="Tipo de instrumento (default: acciones)"
+    ),
     country: str = typer.Option("argentina", "--country", help="País (default: argentina)"),
 ):
     """Cotizaciones de un panel (ej: merval)."""
     output_flags(json, csv, verbose, debug)
     country = resolve_country(country)
     with IOLClientWrapper(ConfigManager(), verbose=verbose, debug=debug) as client:
-        data = client.dispatch("get_panel_quotes", instrumento=instrument, panel=panel, pais=country)
+        data = client.dispatch(
+            "get_panel_quotes", instrumento=instrument, panel=panel, pais=country
+        )
     titulos = data.titulos if hasattr(data, "titulos") else data
-    print(OutputFormatter.render(titulos, columns=MASSIVE_COLUMNS, color_columns=("variacion_porcentual",)))
+    print(
+        OutputFormatter.render(
+            titulos, columns=MASSIVE_COLUMNS, color_columns=("variacion_porcentual",)
+        )
+    )
 
 
 @market_app.command("detail")
@@ -235,7 +251,9 @@ def market_mep_rate(
     csv: bool = CSV_OPTION,
     verbose: bool = VERBOSE_OPTION,
     debug: bool = DEBUG_OPTION,
-    symbol: str = typer.Option("AL30", "--symbol", help="Bono para calcular el MEP (default: AL30)"),
+    symbol: str = typer.Option(
+        "AL30", "--symbol", help="Bono para calcular el MEP (default: AL30)"
+    ),
 ):
     """Cotización del dólar MEP según un bono."""
     output_flags(json, csv, verbose, debug)
