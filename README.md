@@ -4,10 +4,57 @@ CLI tool for the IOL trading platform, built on `py_iol`. Designed for both huma
 
 ## Installation
 
+### From GitHub Releases (recommended — single binary, no Python needed)
+
+**Linux / WSL / macOS:**
+```bash
+curl -fsSL https://raw.githubusercontent.com/ezeprimo/cliol/main/install.sh | bash
+```
+
+**Windows (PowerShell):**
+```powershell
+irm https://raw.githubusercontent.com/ezeprimo/cliol/main/install.ps1 | iex
+```
+
+**Pin a specific version:**
+```bash
+# Linux
+CLIOL_VERSION=v0.1.0 curl -fsSL https://raw.githubusercontent.com/ezeprimo/cliol/main/install.sh | bash
+
+# Windows
+$env:CLIOL_VERSION = 'v0.1.0'
+irm https://raw.githubusercontent.com/ezeprimo/cliol/main/install.ps1 | iex
+```
+
+After install, open a new terminal or run `source ~/.profile` (Linux) / restart PowerShell (Windows).
+
+### From PyPI (requires Python ≥3.10)
+
 ```bash
 pip install cliol
 # or
 uv tool install cliol
+```
+
+### Update / Rollback
+
+```bash
+# Update to latest
+unset CLIOL_VERSION
+curl -fsSL https://raw.githubusercontent.com/ezeprimo/cliol/main/install.sh | bash
+
+# Rollback to pinned version
+CLIOL_VERSION=v0.1.0 curl -fsSL https://raw.githubusercontent.com/ezeprimo/cliol/main/install.sh | bash
+```
+
+### Uninstall
+
+```bash
+# Linux
+curl -fsSL https://raw.githubusercontent.com/ezeprimo/cliol/main/uninstall.sh | bash
+
+# Windows
+irm https://raw.githubusercontent.com/ezeprimo/cliol/main/uninstall.ps1 | iex
 ```
 
 ## Quick Start
