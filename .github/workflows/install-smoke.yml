@@ -1,0 +1,129 @@
+name: Install Smoke
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - "cliol/**"
+      - "src/**"
+      - "install.sh"
+      - "install.ps1"
+      - "scripts/build.sh"
+      - "scripts/build.ps1"
+      - "pyproject.toml"
+      - ".github/workflows/install-smoke.yml"
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  smoke-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+
+      - name: Build binary
+        run: |
+          pip install pyinstaller==6.11.0 pyiol-client typer rich bcrypt platformdirs "tomli>=2.0.0" tomli-w
+          python -m PyInstaller \
+            --onefile \
+            --name cliol-linux-amd64 \
+            --distpath dist \
+            --workpath build/pyinstaller \
+            --add-data "cliol:cliol" \
+            --hidden-import typer \
+            --hidden-import rich \
+            --hidden-import bcrypt \
+            --hidden-import platformdirs \
+            --collect-all typer \
+            --collect-all rich \
+            src/cliol/__main__.py
+          chmod +x dist/cliol-linux-amd64
+
+      - name: Simulate install
+        run: |
+          INSTALL_DIR="$HOME/.local/bin"
+          mkdir -p "$INSTALL_DIR"
+          cp dist/cliol-linux-amd64 "$INSTALL_DIR/cliol"
+          chmod +x "$INSTALL_DIR/cliol"
+          echo "$INSTALL_DIR" >> "$GITHUB_PATH"
+
+      - name: Smoke — version
+        run: |
+          cliol --version
+
+      - name: Smoke — help
+        run: |
+          cliol --help
+          cliol market --help
+          cliol market quote --help
+
+      - name: Smoke — market command groups exist
+        run: |
+          cliol --help | grep -q market
+          cliol --help | grep -q portfolio
+          cliol --help | grep -q trading
+          cliol --help | grep -q fci
+          echo "All expected command groups present"
+
+      - name: Smoke — security commands
+        run: |
+          cliol security --help | grep -q set-password
+          cliol config --help | grep -q trading
+          echo "Security commands present"
+
+  smoke-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+
+      - name: Build binary
+        run: |
+          pip install pyinstaller==6.11.0 pyiol-client typer rich bcrypt platformdirs "tomli>=2.0.0" tomli-w
+          python -m PyInstaller `
+            --onefile `
+            --name cliol-windows-amd64 `
+            --distpath dist `
+            --workpath build/pyinstaller `
+            --add-data "cliol;cliol" `
+            --hidden-import typer `
+            --hidden-import rich `
+            --hidden-import bcrypt `
+            --hidden-import platformdirs `
+            --collect-all typer `
+            --collect-all rich `
+            src/cliol/__main__.py
+
+      - name: Simulate install
+        run: |
+          $installDir = "$env:USERPROFILE\cliol-bin"
+          New-Item -ItemType Directory -Force -Path $installDir | Out-Null
+          Copy-Item dist\cliol-windows-amd64.exe "$installDir\cliol.exe"
+          echo "$installDir" | Out-File -Append -FilePath $env:GITHUB_PATH
+
+      - name: Smoke — version
+        run: cliol --version
+
+      - name: Smoke — help
+        run: |
+          cliol --help
+          cliol market --help
+          cliol market quote --help
+
+      - name: Smoke — market command groups exist
+        run: |
+          cliol --help | Select-String market
+          cliol --help | Select-String portfolio
+          cliol --help | Select-String trading
+          cliol --help | Select-String fci
+          Write-Host "All expected command groups present"
+
+      - name: Smoke — security commands
+        run: |
+          cliol security --help | Select-String set-password
+          cliol config --help | Select-String trading
+          Write-Host "Security commands present"
