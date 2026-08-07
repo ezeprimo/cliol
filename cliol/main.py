@@ -63,8 +63,17 @@ app.add_typer(advisor_app, name="advisor")
 app.command(name="profile", help="Consulta el perfil del cliente.")(profile_command)
 
 
+_app_called = False
+
+
 def run() -> None:
     """Entry point de consola: enruta errores de dominio a stderr con código de salida."""
+    global _app_called
+    if _app_called:
+        import sys
+        print("[cliol] WARNING: run() called twice, skipping second invocation", file=sys.stderr)
+        return
+    _app_called = True
     try:
         app()
     except CliolError as exc:
