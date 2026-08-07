@@ -1,6 +1,4 @@
-"""cliol entry point for `python -m cliol`."""
-
+"""cliol PyInstaller entry point."""
 from cliol.main import run
 
-if __name__ == "__main__":
-    run()
+run()

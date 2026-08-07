@@ -121,7 +121,11 @@ def market_quote(
                     f"El símbolo '{symbol}' no fue encontrado en el mercado {market}."
                 ) from exc
             raise
-    print(OutputFormatter.render(data, columns=QUOTE_COLUMNS, color_columns=("variacion",)))
+    # Inject symbol into result (py_iol's CotizacionTitulo doesn't include it)
+    rows = OutputFormatter.to_rows(data)
+    if rows:
+        rows[0]["simbolo"] = symbol.upper()
+    print(OutputFormatter.render(rows, columns=QUOTE_COLUMNS, color_columns=("variacion",)))
 
 
 @market_app.command("data")
@@ -138,7 +142,10 @@ def market_data(
     market = resolve_market(market)
     with IOLClientWrapper(ConfigManager(), verbose=verbose, debug=debug) as client:
         data = client.dispatch("get_stock_data", symbol=symbol, market=market)
-    print(OutputFormatter.render(data, columns=DATA_COLUMNS))
+    rows = OutputFormatter.to_rows(data)
+    if rows:
+        rows[0]["simbolo"] = symbol.upper()
+    print(OutputFormatter.render(rows, columns=DATA_COLUMNS))
 
 
 @market_app.command("options")
