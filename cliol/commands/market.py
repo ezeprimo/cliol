@@ -273,4 +273,7 @@ def market_mep_rate(
     output_flags(json, csv, verbose, debug)
     with IOLClientWrapper(ConfigManager(), verbose=verbose, debug=debug) as client:
         data = client.dispatch("get_mep_dollar_rate", symbol=symbol)
-    print(OutputFormatter.render(data))
+    if isinstance(data, dict):
+        print(OutputFormatter.render(data))
+    else:
+        print(f"Dólar MEP ({symbol}): ${data}")
