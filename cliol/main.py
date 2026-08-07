@@ -37,7 +37,7 @@ app = typer.Typer(
 )
 
 
-@app.callback()
+@app.callback(invoke_without_command=True)
 def main_callback(
     version: bool = typer.Option(False, "--version", help="Muestra la versión y sale."),
 ):
