@@ -20,19 +20,25 @@ CLEAR_OK = "Contraseña de gastos eliminada. Modo operatoria deshabilitado."
 NO_PASSWORD_CONFIGURED = "No hay una contraseña de gastos configurada."
 
 
-def _read_new_password(prompt_text: str, retry: bool = True) -> str:
-    while True:
+MAX_ATTEMPTS = 3
+
+
+def _read_new_password(prompt_text: str) -> str:
+    for attempt in range(1, MAX_ATTEMPTS + 1):
         first = ask_password(prompt_text)
         second = ask_password("Repetir contraseña de gastos")
         if first != second:
-            if not retry:
-                raise CliolError("Las contraseñas no coinciden.")
-            print("Las contraseñas no coinciden, intente nuevamente.")
+            if attempt >= MAX_ATTEMPTS:
+                raise CliolError("Demasiados intentos. Las contraseñas no coinciden.")
+            print(
+                f"Las contraseñas no coinciden (intento {attempt}/{MAX_ATTEMPTS}), intente nuevamente."
+            )
             continue
         try:
             return SpendingPassword.create(first)
         except ValueError as exc:
             raise CliolError(str(exc)) from exc
+    raise CliolError("Demasiados intentos.")  # unreachable, safety net
 
 
 @security_app.command("set-password")

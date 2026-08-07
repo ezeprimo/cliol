@@ -31,7 +31,7 @@ DEBUG_OPTION = typer.Option(
 def output_flags(json: bool, csv: bool, verbose: bool, debug: bool) -> None:
     """Sincroniza las banderas globales con el estado de salida del módulo."""
     if json and csv:
-        raise CliolError("Only one output format allowed")
+        raise CliolError("Solo se permite un formato de salida: --json o --csv, no ambos.")
     set_format("json" if json else "csv" if csv else "table")
     set_verbose(verbose)
     set_debug(debug)

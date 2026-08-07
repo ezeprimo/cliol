@@ -2,11 +2,10 @@
 
 import typer
 
+from cliol.commands.security_cmd import _read_new_password
 from cliol.config import ConfigManager
-from cliol.errors import CliolError
 from cliol.options import CSV_OPTION, DEBUG_OPTION, JSON_OPTION, VERBOSE_OPTION, output_flags
 from cliol.prompts import ask_password, ask_text, confirm
-from cliol.security import SpendingPassword
 
 setup_app = typer.Typer(
     help="Configuración inicial interactiva de cliol (credenciales IOL y operatoria).",
@@ -29,17 +28,6 @@ def _read_credentials():
     return username, password
 
 
-def _read_spending_password():
-    first = ask_password("Contraseña de gastos (mínimo 4 caracteres)")
-    second = ask_password("Repetir contraseña de gastos")
-    if first != second:
-        raise CliolError("Las contraseñas no coinciden.")
-    try:
-        return SpendingPassword.create(first)
-    except ValueError as exc:
-        raise CliolError(str(exc)) from exc
-
-
 @setup_app.command()
 def setup(
     json: bool = JSON_OPTION,
@@ -59,7 +47,7 @@ def setup(
     enable_trading = confirm("¿Habilitar operatoria sobre su cuenta? (recomendado: NO)")
     trading = {"enabled": bool(enable_trading)}
     if enable_trading:
-        trading["password_hash"] = _read_spending_password()
+        trading["password_hash"] = _read_new_password("Contraseña de gastos (mínimo 4 caracteres)")
     config.save({"iol": {"username": username, "password": password}, "trading": trading})
     print(SAVED_MESSAGE)
     if not enable_trading:

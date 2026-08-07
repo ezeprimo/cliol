@@ -5,8 +5,6 @@ from rich.prompt import Prompt
 
 __all__ = ["ask_text", "ask_password", "ask_int", "confirm"]
 
-PASSWORD_PROMPT_HELP = "Contraseña"
-
 
 def ask_text(message: str) -> str:
     """Solicita texto por stdin (sin enmascarar)."""

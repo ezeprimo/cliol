@@ -43,7 +43,7 @@ def config_set(
     """Guarda una clave de configuración."""
     output_flags(json, csv, verbose, debug)
     ConfigManager().set(key, value)
-    print(_mask(value, key) if key in ("iol.password", "trading.password_hash") else value)
+    print(_mask(value, key))
 
 
 @config_app.command("get")

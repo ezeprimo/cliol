@@ -107,9 +107,6 @@ class ConfigManager:
         value = self._get_raw("trading.password_hash")
         return str(value) if value else None
 
-    def get_password_hash_or_none(self) -> Optional[str]:
-        return self.get_password_hash()
-
     def redact(self, config: dict) -> dict:
         """Copia de la configuración con las claves de contraseña enmascaradas."""
         redacted = {}

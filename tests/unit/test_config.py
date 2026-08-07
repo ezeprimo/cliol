@@ -68,7 +68,6 @@ def test_is_trading_enabled_true_when_set(config_manager):
 def test_password_hash_accessors(config_manager):
     config_manager.set("trading.password_hash", "$2b$12$abc")
     assert config_manager.get_password_hash() == "$2b$12$abc"
-    assert config_manager.get_password_hash_or_none() == "$2b$12$abc"
 
 
 def test_redact_masks_password_fields(config_manager):

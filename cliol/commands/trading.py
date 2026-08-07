@@ -27,12 +27,11 @@ def _resolve_choice(value, choices, kind) -> str:
     return canonical
 
 
-def _gate(config) -> TradingGate:
+def _gate(config) -> None:
     """Creates ONE gate instance, calls both check() and prompt_password() on it."""
     gate = TradingGate(config)
     gate.check()
     gate.prompt_password()
-    return gate
 
 
 def _order_summary(action: str, cantidad: int, symbol: str, precio: float, market: str, term: str):
