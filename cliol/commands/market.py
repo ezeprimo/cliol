@@ -39,9 +39,11 @@ DATA_COLUMNS = {
 OPTIONS_COLUMNS = {
     "simbolo": "Símbolo",
     "tipo_opcion": "Tipo",
-    "precio_ejercicio": "Strike",
     "fecha_vencimiento": "Vencimiento",
-    "ultimo_precio": "Último",
+}
+INSTRUMENTS_COLUMNS = {
+    "instrumento": "Instrumento",
+    "pais": "País",
 }
 MASSIVE_COLUMNS = {
     "simbolo": "Símbolo",
@@ -188,7 +190,7 @@ def market_instruments(
     country = resolve_country(country)
     with IOLClientWrapper(ConfigManager(), verbose=verbose, debug=debug) as client:
         data = client.dispatch("get_market_instruments", pais=country)
-    print(OutputFormatter.render(data, columns=DATA_COLUMNS))
+    print(OutputFormatter.render(data, columns=INSTRUMENTS_COLUMNS))
 
 
 @market_app.command("massive")

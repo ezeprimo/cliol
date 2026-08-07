@@ -28,15 +28,13 @@ PARAMETERS_COLUMNS = {
     "horario_fin": "Horario fin",
     "disponible": "Disponible",
 }
-VALIDATION_COLUMNS = {"valido": "Válido", "message": "Mensaje", "monto_ajustado": "Monto ajustado"}
+VALIDATION_COLUMNS = {"valido": "Válido", "mensaje": "Mensaje", "monto_ajustado": "Monto ajustado"}
 RESULT_COLUMNS = {
     "ok": "OK",
     "numero_operacion": "Operación",
     "numero_operacion_compra": "Compra",
     "numero_operacion_venta": "Venta",
-    "monto_pesos": "Pesos",
-    "monto_dolares": "Dólares",
-    "tipo_cambio": "Tipo",
+    "mensaje": "Mensaje",
 }
 ESTIMATE_SUGGESTION = (
     "Use 'cliol mep estimate-buy {monto}' para ver el costo estimado antes de operar."
