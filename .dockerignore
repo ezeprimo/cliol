@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.git/
+.venv/
+dist/
+build/
+*.spec
+tests/
+docs/
+*.md
+!docker/README.md

@@ -52,11 +52,13 @@ cliol = "cliol.main:run"
 dev = [
     "pytest>=7.0.0",
     "ruff>=0.4.0",
+    "build>=1.2.2",
 ]
 
 [project.urls]
-Homepage = "https://github.com/ezeprimo/py_iol"
-Repository = "https://github.com/ezeprimo/py_iol"
+Homepage = "https://github.com/ezeprimo/cliol"
+Repository = "https://github.com/ezeprimo/cliol"
+Issues = "https://github.com/ezeprimo/cliol/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["cliol"]
