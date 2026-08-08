@@ -165,7 +165,7 @@ cliol advisor save-profile --client-id 12345 --answers '[{"idPregunta":1,"idResp
 cliol advisor sell-usd --client-id 12345 GD30 10 45
 ```
 
-## Trading Commands (ALL GATED)
+## Trading Commands (password required for orders, not for cancel)
 
 ```bash
 # Buy stock (pesos)
@@ -179,7 +179,7 @@ cliol trading sell GGAL 5 520
 cliol trading buy-usd GD30 10 45
 cliol trading sell-usd GD30 5 46
 
-# Cancel pending order
+# Cancel pending order (trading mode required, NO password)
 cliol trading cancel 12345
 ```
 

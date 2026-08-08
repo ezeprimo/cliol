@@ -142,7 +142,7 @@ cliol trading buy <symbol> <qty> <price> [--market] [--term]   # Buy (gated)
 cliol trading sell <symbol> <qty> <price> [--market] [--term]  # Sell (gated)
 cliol trading buy-usd <symbol> <qty> <price>                    # Buy USD bonds (gated)
 cliol trading sell-usd <symbol> <qty> <price>                   # Sell USD bonds (gated)
-cliol trading cancel <operation-id>                             # Cancel pending order (gated)
+cliol trading cancel <operation-id>                             # Cancel pending order (trading mode required, no password)
 ```
 
 ### Auth & Config
