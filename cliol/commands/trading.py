@@ -189,10 +189,10 @@ def trading_cancel(
     verbose: bool = VERBOSE_OPTION,
     debug: bool = DEBUG_OPTION,
 ):
-    """Cancela una operación pendiente — requiere operatoria."""
+    """Cancela una operación pendiente — requiere operatoria habilitada (sin contraseña)."""
     output_flags(json, csv, verbose, debug)
     config = ConfigManager()
-    _gate(config)
+    TradingGate(config).check()  # solo check, sin prompt_password — cancelar no mueve fondos
     with IOLClientWrapper(config, verbose=verbose, debug=debug) as client:
         data = client.dispatch("cancel_operation", numero=numero)
     if data is True:
