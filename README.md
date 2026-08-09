@@ -1,5 +1,12 @@
 # cliol — CLI for Invertir Online (IOL)
 
+[![CI](https://github.com/ezeprimo/cliol/actions/workflows/ci.yml/badge.svg)](https://github.com/ezeprimo/cliol/actions/workflows/ci.yml)
+[![Install Smoke](https://github.com/ezeprimo/cliol/actions/workflows/install-smoke.yml/badge.svg)](https://github.com/ezeprimo/cliol/actions/workflows/install-smoke.yml)
+[![Release](https://img.shields.io/github/v/release/ezeprimo/cliol?include_prereleases&label=release)](https://github.com/ezeprimo/cliol/releases)
+[![Coverage](https://img.shields.io/badge/coverage-57%25-green)](https://github.com/ezeprimo/cliol)
+[![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue)](https://github.com/ezeprimo/cliol)
+[![License](https://img.shields.io/github/license/ezeprimo/cliol)](https://github.com/ezeprimo/cliol/blob/master/LICENCE)
+
 CLI tool for the IOL trading platform, built on `py_iol`. Designed for both human users and AI agents.
 
 ## Installation
