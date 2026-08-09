@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "cliol"
-version = "0.1.0"
+version = "0.1.0-beta.1"
 description = "CLI para la API de Invertir Online (IOL) construida sobre py_iol"
 authors = [
     {name = "Ezequiel Primon", email = "ezeprimo@gmail.com"},
