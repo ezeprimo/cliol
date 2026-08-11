@@ -39,7 +39,7 @@ ruff format --check cliol/ tests/
 
 ## Pull Requests
 
-- Create a feature branch from `master`
+- Create a feature branch from `main`
 - Include tests for new functionality
 - Ensure CI passes (lint + test matrix)
 - Keep PRs focused and reviewable
