@@ -1,4 +1,4 @@
-"""Unit tests for IOLClientWrapper: lazy init, dispatch raw/typed, errors, context manager."""
+"""Unit tests for IOLClientWrapper: lazy init, dispatch, errors, context manager."""
 
 import pytest
 
@@ -56,12 +56,13 @@ def test_dispatch_uses_typed_method_by_default(config_manager, fake_iol):
         set_format("table")
 
 
-def test_dispatch_uses_raw_method_when_json(config_manager, fake_iol):
+def test_dispatch_uses_typed_method_even_when_json(config_manager, fake_iol):
+    """La salida JSON usa el mismo shape tipado que la tabla (issue #5)."""
     set_format("json")
     try:
         wrapper = IOLClientWrapper(config_manager)
         result = wrapper.dispatch("get_stock_quote", symbol="GGAL")
-        assert result == {"raw": "GGAL", "market": "bCBA", "term": "t1"}
+        assert result == {"tipado": "GGAL", "market": "bCBA", "term": "t1"}
     finally:
         set_format("table")
 
