@@ -12,7 +12,7 @@ from cliol.constants import (
 )
 from cliol.errors import APIError, CliolError
 from cliol.options import CSV_OPTION, DEBUG_OPTION, JSON_OPTION, VERBOSE_OPTION, output_flags
-from cliol.output import OutputFormatter, get_format
+from cliol.output import OutputFormatter
 
 market_app = typer.Typer(
     help="Datos de mercado: cotizaciones e instrumentos (solo consulta).", no_args_is_help=True
@@ -123,15 +123,11 @@ def market_quote(
                     f"El símbolo '{symbol}' no fue encontrado en el mercado {market}."
                 ) from exc
             raise
-    # Inject symbol into result for table/csv output (py_iol models lack it)
-    # For --json, use raw data as-is
-    if get_format() == "json":
-        print(OutputFormatter.render(data, color_columns=("variacion",)))
-    else:
-        rows = OutputFormatter.to_rows(data)
-        if rows:
-            rows[0]["simbolo"] = symbol.upper()
-        print(OutputFormatter.render(rows, columns=QUOTE_COLUMNS, color_columns=("variacion",)))
+    # Inject symbol into result (py_iol models lack it); same shape for all formats
+    rows = OutputFormatter.to_rows(data)
+    if rows:
+        rows[0]["simbolo"] = symbol.upper()
+    print(OutputFormatter.render(rows, columns=QUOTE_COLUMNS, color_columns=("variacion",)))
 
 
 @market_app.command("data")
@@ -148,13 +144,10 @@ def market_data(
     market = resolve_market(market)
     with IOLClientWrapper(ConfigManager(), verbose=verbose, debug=debug) as client:
         data = client.dispatch("get_stock_data", symbol=symbol, market=market)
-    if get_format() == "json":
-        print(OutputFormatter.render(data))
-    else:
-        rows = OutputFormatter.to_rows(data)
-        if rows:
-            rows[0]["simbolo"] = symbol.upper()
-        print(OutputFormatter.render(rows, columns=DATA_COLUMNS))
+    rows = OutputFormatter.to_rows(data)
+    if rows:
+        rows[0]["simbolo"] = symbol.upper()
+    print(OutputFormatter.render(rows, columns=DATA_COLUMNS))
 
 
 @market_app.command("options")

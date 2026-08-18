@@ -1,8 +1,9 @@
 """Envoltorio del cliente IOL para cliol.
 
 Gestiona la sesión de `pyIol.IOLClient` de forma perezosa (una por invocación),
-traduce errores de py_iol a la jerarquía CliolError y despacha entre métodos
-tipados y variantes `_raw()` según el formato de salida global (`--json`).
+traduce errores de py_iol a la jerarquía CliolError y despacha siempre a los
+métodos tipados: tabla, CSV y JSON se serializan desde el mismo modelo, de
+modo que la salida JSON refleja la tabla por construcción.
 """
 
 try:  # httpx es dependencia de py_iol; puede no estar importable en algunos entornos
@@ -14,7 +15,7 @@ from pyIol import IOLAPIError, IOLClient
 
 from cliol.config import ConfigManager
 from cliol.errors import APIError, AuthError, CliolError, NetworkError
-from cliol.output import get_debug, get_format, get_verbose
+from cliol.output import get_debug, get_verbose
 
 __all__ = ["IOLClientWrapper"]
 
@@ -63,10 +64,6 @@ class IOLClientWrapper:
             self._client = self._get_client()
         return self._client
 
-    @property
-    def is_json(self) -> bool:
-        return get_format() == "json"
-
     def get_credentials(self):
         config = self.config.load()
         iol = config.get("iol") or {}
@@ -106,20 +103,13 @@ class IOLClientWrapper:
         self.close()
 
     def dispatch(self, method: str, **kwargs):
-        """Llama al método tipado de py_iol, o a su variante `_raw()` con --json."""
+        """Llama al método tipado de py_iol (shape único para todos los formatos)."""
 
-        client = self.client
-        raw = self.is_json
-        target = f"{method}_raw" if raw else method
-        fn = getattr(client, target, None)
+        fn = getattr(self.client, method, None)
         if fn is None:
-            if raw:
-                # Fallback: el método no tiene variante raw; usar el tipado.
-                fn = getattr(client, method, None)
-            if fn is None:
-                raise CliolError(f"El método {method} no está disponible en el cliente IOL.")
+            raise CliolError(f"El método {method} no está disponible en el cliente IOL.")
         if self._verbose:
-            self._log(f"Llamando a {target}({', '.join(f'{k}={v!r}' for k, v in kwargs.items())})")
+            self._log(f"Llamando a {method}({', '.join(f'{k}={v!r}' for k, v in kwargs.items())})")
         try:
             return fn(**kwargs)
         except IOLAPIError as exc:
