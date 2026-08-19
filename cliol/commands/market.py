@@ -12,7 +12,7 @@ from cliol.constants import (
 )
 from cliol.errors import APIError, CliolError
 from cliol.options import CSV_OPTION, DEBUG_OPTION, JSON_OPTION, VERBOSE_OPTION, output_flags
-from cliol.output import OutputFormatter
+from cliol.output import OutputFormatter, get_format
 
 market_app = typer.Typer(
     help="Datos de mercado: cotizaciones e instrumentos (solo consulta).", no_args_is_help=True
@@ -270,5 +270,9 @@ def market_mep_rate(
         data = client.dispatch("get_mep_dollar_rate", symbol=symbol)
     if isinstance(data, dict):
         print(OutputFormatter.render(data))
+    elif get_format() in ("json", "csv"):
+        # La API devuelve un escalar (ej: 1515.24); en json/csv lo emitimos
+        # con la misma forma tipada que el resto de los comandos.
+        print(OutputFormatter.render({"simbolo": symbol, "precio": data}))
     else:
         print(f"Dólar MEP ({symbol}): ${data}")
