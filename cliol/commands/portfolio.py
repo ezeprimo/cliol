@@ -181,9 +181,9 @@ def operations_list(
             "fecha": op.fecha_orden,
             "tipo": op.tipo,
             "simbolo": op.simbolo,
-            "cantidad": op.cantidad,
-            "precio": op.precio,
-            "monto": op.monto,
+            "cantidad": op.cantidad if op.cantidad is not None else op.cantidad_operada,
+            "precio": op.precio if op.precio is not None else op.precio_operado,
+            "monto": op.monto if op.monto is not None else op.monto_operado,
             "estado": op.estado,
         }
         for op in data
