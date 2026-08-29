@@ -104,3 +104,48 @@ def test_render_empty_list_produces_header_only_table():
 def test_to_rows_raises_on_unsupported_input():
     with pytest.raises(TypeError):
         OutputFormatter.to_rows(42)
+
+
+def test_table_does_not_duplicate_output(capsys):
+    """Regression for #1: table() must not print to stdout/stderr; only returned string contains the table."""
+    set_format("table")
+    data = FakeModel("GGAL", 100.0, 1.0)
+    columns = {"simbolo": "Símbolo", "ultimo_precio": "Precio"}
+    rendered = OutputFormatter.render(data, columns=columns)
+    # Caller does print(rendered) — simulate the command layer
+    print(rendered)
+    out, err = capsys.readouterr()
+    # One table only: GGAL and header appear exactly once in combined captured output
+    assert out.count("GGAL") == 1
+    assert out.count("Símbolo") == 1
+    assert err == ""
+    # Returned string itself also contains exactly one table
+    assert rendered.count("GGAL") == 1
+
+
+def test_table_via_cli_runner_has_single_table():
+    """Regression for #1 via Typer CliRunner: market quote prints one table."""
+    from unittest.mock import MagicMock, patch
+
+    from typer.testing import CliRunner
+
+    from cliol.main import app
+
+    runner = CliRunner()
+    with patch("cliol.commands.market.ConfigManager"), patch(
+        "cliol.commands.market.IOLClientWrapper"
+    ) as MockWrapper:
+        mock_client = MagicMock()
+        MockWrapper.return_value.__enter__.return_value = mock_client
+        mock_client.dispatch.return_value = {
+            "ultimo_precio": 1234.5,
+            "variacion": 1.5,
+            "precio_compra": 1230.0,
+            "precio_venta": 1240.0,
+            "volumen_nominal": 1000,
+            "fecha_hora": "2026-08-29T10:00:00",
+        }
+        result = runner.invoke(app, ["market", "quote", "GGAL"])
+        assert result.exit_code == 0
+        assert result.output.count("GGAL") == 1
+        assert result.output.count("Símbolo") == 1
