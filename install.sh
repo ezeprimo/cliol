@@ -1,13 +1,45 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# cliol installer — supports Linux (amd64) and macOS (arm64/amd64)
+# Auto-detects OS/arch and downloads the correct binary asset.
+# Override with CLIOL_ASSET_NAME to force a specific asset.
+# Supported assets:
+#   cliol-linux-amd64       (Linux x86_64)
+#   cliol-linux-arm64       (Linux ARM64 — future, fallback to pip if missing)
+#   cliol-macos-arm64       (macOS Apple Silicon M1/M2/M3/M4)
+#   cliol-macos-amd64       (macOS Intel x86_64)
+#   cliol-windows-amd64.exe (Windows x86_64)
+
 REPO="${CLIOL_REPO:-ezeprimo/cliol}"
 API_BASE="${CLIOL_API_BASE:-https://api.github.com}"
 RAW_BASE="${CLIOL_RAW_BASE:-https://raw.githubusercontent.com}"
 REQUESTED_VERSION_RAW="${CLIOL_VERSION:-latest}"
 if [[ -z "${REQUESTED_VERSION_RAW}" ]]; then REQUESTED_VERSION_RAW="latest"; fi
 
-ASSET_NAME="cliol-linux-amd64"
+detect_asset_name() {
+  local os arch
+  os="$(uname -s 2>/dev/null || echo Linux)"
+  arch="$(uname -m 2>/dev/null || echo x86_64)"
+  case "$os" in
+    Darwin)
+      case "$arch" in
+        arm64|aarch64) echo "cliol-macos-arm64" ;;
+        x86_64|amd64)  echo "cliol-macos-amd64" ;;
+        *) echo "cliol-macos-arm64" ;;
+      esac
+      ;;
+    Linux|*)
+      # Only amd64 is published today; arm64 is prepared for future
+      case "$arch" in
+        aarch64|arm64) echo "cliol-linux-arm64" ;;
+        *) echo "cliol-linux-amd64" ;;
+      esac
+      ;;
+  esac
+}
+
+ASSET_NAME="${CLIOL_ASSET_NAME:-$(detect_asset_name)}"
 CHECKSUMS_ASSET_NAME="checksums.txt"
 INSTALL_DIR="${CLIOL_INSTALL_DIR:-$HOME/.local/bin}"
 TARGET_PATH="$INSTALL_DIR/cliol"
@@ -100,7 +132,7 @@ RESOLVED_TAG="$(extract_json_field "$RELEASE_JSON" tag_name)"
 if [[ -z "$RESOLVED_TAG" ]]; then echo "ERROR: Resolved release is missing tag_name." >&2; exit 1; fi
 if [[ "$REQUESTED_VERSION" != "latest" && "$RESOLVED_TAG" != "$REQUESTED_VERSION" ]]; then echo "ERROR: Resolved tag '$RESOLVED_TAG' does not match requested '$REQUESTED_VERSION'." >&2; exit 1; fi
 
-if ! BINARY_URL="$(asset_url_from_release_json "$RELEASE_JSON" "$ASSET_NAME")"; then echo "ERROR: Release $RESOLVED_TAG is missing asset '$ASSET_NAME'." >&2; exit 1; fi
+if ! BINARY_URL="$(asset_url_from_release_json "$RELEASE_JSON" "$ASSET_NAME")"; then show_fallback_guidance "$RESOLVED_TAG" "Release $RESOLVED_TAG is missing asset '$ASSET_NAME'."; exit 1; fi
 if ! CHECKSUMS_URL="$(asset_url_from_release_json "$RELEASE_JSON" "$CHECKSUMS_ASSET_NAME")"; then echo "ERROR: Release $RESOLVED_TAG is missing asset '$CHECKSUMS_ASSET_NAME'." >&2; exit 1; fi
 
 curl -fsSL "$BINARY_URL" -o "$BINARY_PATH"

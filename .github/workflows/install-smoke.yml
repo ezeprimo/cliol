@@ -127,3 +127,69 @@ jobs:
           cliol security --help | Select-String set-password
           cliol config --help | Select-String trading
           Write-Host "Security commands present"
+
+  smoke-macos:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          # Apple Silicon (ARM64) — macos-15 is current GA (macos-14 deprecated Nov 2025)
+          - os: macos-15
+            asset: cliol-macos-arm64
+          # Intel (amd64) — macos-13 retired Dec 2025, use macos-15-intel (last Intel, until Aug 2027)
+          - os: macos-15-intel
+            asset: cliol-macos-amd64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+
+      - name: Build binary
+        run: |
+          pip install pyinstaller==6.11.0 pyiol-client typer rich bcrypt platformdirs "tomli>=2.0.0" tomli-w
+          python -m PyInstaller \
+            --onefile \
+            --name ${{ matrix.asset }} \
+            --distpath dist \
+            --workpath build/pyinstaller \
+            --add-data "cliol:cliol" \
+            --hidden-import typer \
+            --hidden-import rich \
+            --hidden-import bcrypt \
+            --hidden-import platformdirs \
+            --collect-all typer \
+            --collect-all rich \
+            src/cliol/__main__.py
+          chmod +x dist/${{ matrix.asset }}
+
+      - name: Simulate install
+        run: |
+          INSTALL_DIR="$HOME/.local/bin"
+          mkdir -p "$INSTALL_DIR"
+          cp dist/${{ matrix.asset }} "$INSTALL_DIR/cliol"
+          chmod +x "$INSTALL_DIR/cliol"
+          echo "$INSTALL_DIR" >> "$GITHUB_PATH"
+
+      - name: Smoke — version
+        run: |
+          cliol --version
+
+      - name: Smoke — help
+        run: |
+          cliol --help
+          cliol market --help
+          cliol market quote --help
+
+      - name: Smoke — market command groups exist
+        run: |
+          cliol --help | grep -q market
+          cliol --help | grep -q portfolio
+          cliol --help | grep -q trading
+          cliol --help | grep -q fci
+          echo "All expected command groups present"
+
+      - name: Smoke — security commands
+        run: |
+          cliol security --help | grep -q set-password
+          cliol config --help | grep -q trading
+          echo "Security commands present"

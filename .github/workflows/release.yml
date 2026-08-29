@@ -28,12 +28,22 @@ jobs:
     strategy:
       matrix:
         include:
+          # Linux x86_64
           - os: ubuntu-latest
-            script: bash ./scripts/build.sh
             asset: cliol-linux-amd64
+            script: bash ./scripts/build.sh --asset-name cliol-linux-amd64
+          # Windows x86_64
           - os: windows-latest
-            script: pwsh ./scripts/build.ps1
             asset: cliol-windows-amd64.exe
+            script: pwsh ./scripts/build.ps1
+          # Apple Silicon (ARM64) — macos-15 is current GA (macos-14 deprecated Nov 2025)
+          - os: macos-15
+            asset: cliol-macos-arm64
+            script: bash ./scripts/build.sh --asset-name cliol-macos-arm64
+          # Intel (amd64) — macos-13 retired Dec 2025, use macos-15-intel (last Intel, until Aug 2027)
+          - os: macos-15-intel
+            asset: cliol-macos-amd64
+            script: bash ./scripts/build.sh --asset-name cliol-macos-amd64
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -41,12 +51,13 @@ jobs:
       - name: Build binary
         run: ${{ matrix.script }} --version "${{ github.ref_name }}"
       - name: Smoke test
+        shell: bash
         run: |
-          ${{ matrix.os == 'ubuntu-latest' && format('dist/{0} --version', matrix.asset) || '' }}
           if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
             ./dist/${{ matrix.asset }} --version
+          else
+            dist/${{ matrix.asset }} --version
           fi
-        shell: bash
       - uses: actions/upload-artifact@v4
         with:
           name: binary-${{ matrix.os }}
