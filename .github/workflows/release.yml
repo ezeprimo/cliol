@@ -36,12 +36,12 @@ jobs:
           - os: windows-latest
             asset: cliol-windows-amd64.exe
             script: pwsh ./scripts/build.ps1
-          # macOS Apple Silicon (ARM64) — runner macos-14 is ARM
-          - os: macos-14
+          # Apple Silicon (ARM64) — macos-15 is current GA (macos-14 deprecated Nov 2025)
+          - os: macos-15
             asset: cliol-macos-arm64
             script: bash ./scripts/build.sh --asset-name cliol-macos-arm64
-          # macOS Intel (amd64) — macos-13 is the last Intel runner
-          - os: macos-13
+          # Intel (amd64) — macos-13 retired Dec 2025, use macos-15-intel (last Intel, until Aug 2027)
+          - os: macos-15-intel
             asset: cliol-macos-amd64
             script: bash ./scripts/build.sh --asset-name cliol-macos-amd64
     steps:
