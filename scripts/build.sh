@@ -1,16 +1,42 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-CLEAN=0; VERSION=""; OUTPUT_DIR="dist"
+CLEAN=0; VERSION=""; OUTPUT_DIR="dist"; ASSET_NAME=""
 while [[ $# -gt 0 ]]; do case "$1" in
   --clean|-c) CLEAN=1; shift;;
   --version|-v) VERSION="$2"; shift 2;;
   --output-dir|-o) OUTPUT_DIR="$2"; shift 2;;
+  --asset-name) ASSET_NAME="$2"; shift 2;;
   *) echo "Unknown option: $1"; exit 1;;
 esac; done
 
 if [[ -z "$VERSION" ]]; then echo "ERROR: --version is required (e.g. --version v0.1.0)"; exit 1; fi
 PACKAGE_VERSION="${VERSION#v}"
+
+detect_asset_name() {
+  local os arch
+  os="$(uname -s 2>/dev/null || echo Linux)"
+  arch="$(uname -m 2>/dev/null || echo x86_64)"
+  case "$os" in
+    Darwin)
+      case "$arch" in
+        arm64|aarch64) echo "cliol-macos-arm64" ;;
+        x86_64|amd64)  echo "cliol-macos-amd64" ;;
+        *) echo "cliol-macos-arm64" ;;
+      esac
+      ;;
+    Linux|*)
+      case "$arch" in
+        aarch64|arm64) echo "cliol-linux-arm64" ;;
+        *) echo "cliol-linux-amd64" ;;
+      esac
+      ;;
+  esac
+}
+
+if [[ -z "$ASSET_NAME" ]]; then
+  ASSET_NAME="$(detect_asset_name)"
+fi
 
 # Use local venv if available
 if [[ -d ".venv" ]]; then source .venv/bin/activate 2>/dev/null || true; fi
@@ -24,7 +50,7 @@ pip install -e . --quiet
 
 python -m PyInstaller \
   --onefile \
-  --name "cliol-linux-amd64" \
+  --name "$ASSET_NAME" \
   --distpath "$OUTPUT_DIR" \
   --workpath build/pyinstaller \
   --add-data "cliol:cliol" \
@@ -38,7 +64,7 @@ python -m PyInstaller \
   --collect-all rich \
   src/cliol/__main__.py
 
-BINARY="$OUTPUT_DIR/cliol-linux-amd64"
+BINARY="$OUTPUT_DIR/$ASSET_NAME"
 if [[ -f "$BINARY" ]]; then
   chmod +x "$BINARY"
   echo "Built $BINARY ($(du -h "$BINARY" | cut -f1))"

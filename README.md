@@ -13,15 +13,27 @@ CLI tool for the IOL trading platform, built on `py_iol`. Designed for both huma
 
 ### From GitHub Releases (recommended — single binary, no Python needed)
 
-**Linux / WSL / macOS:**
+**Linux / WSL / macOS (binary):**
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ezeprimo/cliol/main/install.sh | bash
+# Automatically detects Linux (amd64) or macOS (arm64/amd64) and downloads the correct binary.
 ```
 
 **Windows (PowerShell):**
 ```powershell
 irm https://raw.githubusercontent.com/ezeprimo/cliol/main/install.ps1 | iex
 ```
+
+**Available binary assets:**
+
+| Asset | Platform | Architecture |
+|-------|----------|--------------|
+| `cliol-linux-amd64` | Linux | x86_64 (amd64) |
+| `cliol-macos-arm64` | macOS | Apple Silicon (M1/M2/M3/M4) |
+| `cliol-macos-amd64` | macOS | Intel x86_64 |
+| `cliol-windows-amd64.exe` | Windows | x86_64 (amd64) |
+
+> The `install.sh` script auto-detects OS/arch via `uname -s`/`uname -m`. Override with `CLIOL_ASSET_NAME=cliol-macos-arm64 curl -fsSL ... | bash` if needed. For unsupported platforms (e.g., Linux ARM64) the installer shows fallback guidance to `pip`/`pipx`.
 
 **Pin a specific version:**
 ```bash
