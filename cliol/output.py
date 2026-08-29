@@ -187,7 +187,8 @@ class OutputFormatter:
                     text.stylize(style)
                 styled_cells.append(text)
             table.add_row(*styled_cells)
-        console = Console(record=True, width=160, force_terminal=False)
+        buffer = io.StringIO()
+        console = Console(file=buffer, record=True, width=160, force_terminal=False)
         console.print(table)
         return console.export_text()
 
