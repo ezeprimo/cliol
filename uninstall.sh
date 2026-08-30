@@ -60,5 +60,37 @@ if [[ -d "$INSTALL_DIR" ]] && [[ -z "$(ls -A "$INSTALL_DIR" 2>/dev/null)" ]]; th
   else rmdir "$INSTALL_DIR" 2>/dev/null && ok "empty directory $INSTALL_DIR" || skip "$INSTALL_DIR (not empty)"; fi
 fi
 
+# Remove update cache (primary + fallback) best-effort
+CACHE_PRIMARY=""
+if command -v python3 >/dev/null 2>&1; then
+  CACHE_PRIMARY="$(python3 -c 'import platformdirs; print(platformdirs.user_cache_dir("cliol"))' 2>/dev/null || true)"
+fi
+if [[ -z "$CACHE_PRIMARY" ]]; then CACHE_PRIMARY="$HOME/.cache/cliol"; fi
+CACHE_FILE_PRIMARY="$CACHE_PRIMARY/update_cache.json"
+CACHE_FILE_FALLBACK="$HOME/.config/cliol/.update_cache.json"
+# Also clean legacy ~/.cache fallback explicitly
+CACHE_FILE_LEGACY="$HOME/.cache/cliol/update_cache.json"
+
+# Deduplicate primary vs legacy
+if [[ "$CACHE_FILE_PRIMARY" == "$CACHE_FILE_LEGACY" ]]; then
+  CACHE_FILES=("$CACHE_FILE_PRIMARY" "$CACHE_FILE_FALLBACK")
+else
+  CACHE_FILES=("$CACHE_FILE_PRIMARY" "$CACHE_FILE_LEGACY" "$CACHE_FILE_FALLBACK")
+fi
+
+for cache_path in "${CACHE_FILES[@]}"; do
+  if [[ -f "$cache_path" ]]; then
+    if [[ "$DRY_RUN" -eq 1 ]]; then dry "remove cache $cache_path"
+    else rm -f "$cache_path" 2>/dev/null && ok "cache $cache_path" || skip "$cache_path"; fi
+  else
+    if [[ "$DRY_RUN" -eq 1 ]]; then
+      # dry-run still reports would-be if file existed? Only report absent for clarity
+      absent "$cache_path (cache)"
+    else
+      absent "$cache_path (cache)"
+    fi
+  fi
+done
+
 if [[ "$REMOVED" -eq 1 ]]; then echo; echo "Uninstall complete. Run 'cliol' again to verify removal."; fi
 echo; echo "To reinstall: curl -fsSL https://raw.githubusercontent.com/$REPO/main/install.sh | bash"

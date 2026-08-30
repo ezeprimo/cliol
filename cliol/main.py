@@ -22,6 +22,7 @@ from cliol.commands.portfolio import (
 from cliol.commands.security_cmd import security_app
 from cliol.commands.setup import setup as setup_command
 from cliol.commands.trading import trading_app
+from cliol.commands.update import update_app
 from cliol.errors import CliolError
 from cliol.output import get_debug
 
@@ -60,11 +61,21 @@ app.add_typer(mep_app, name="mep")
 app.add_typer(cpd_app, name="cpd")
 app.add_typer(trading_app, name="trading")
 app.add_typer(advisor_app, name="advisor")
+app.add_typer(update_app, name="update")
 app.command(name="profile", help="Consulta el perfil del cliente.")(profile_command)
 
 
 def run() -> None:
     """Entry point de consola: enruta errores de dominio a stderr con código de salida."""
+    # Early bypass for help/version to avoid banner cost (should_check also guards, but keep fast)
+    if "--help" in sys.argv or "-h" in sys.argv or "--version" in sys.argv:
+        try:
+            app()
+        except SystemExit as exc:
+            raise exc
+        except typer.Exit as exc:
+            raise SystemExit(exc.exit_code or 0) from exc
+        return
     try:
         app()
     except CliolError as exc:
@@ -81,6 +92,14 @@ def run() -> None:
         else:
             print(f"Error inesperado: {exc}", file=sys.stderr)
         raise SystemExit(1) from exc
+    finally:
+        # Guarded banner to stderr, never alter exit code
+        try:
+            from cliol.update_checker import check_and_notify
+
+            check_and_notify()
+        except Exception:
+            pass
 
 
 if __name__ == "__main__":

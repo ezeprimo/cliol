@@ -103,6 +103,26 @@ class ConfigManager:
             return value
         return str(value).lower() == "true"
 
+    def is_update_check_enabled(self) -> bool:
+        """Return False if updates.check or alias update_check.enabled is false/0/no."""
+        value = self._get_raw("updates.check")
+        if value is None:
+            value = self._get_raw("update_check.enabled")
+        if value is None:
+            return True
+        if isinstance(value, bool):
+            return value
+        val_str = str(value).strip().lower()
+        if val_str in ("false", "0", "no", "off", "disabled"):
+            return False
+        if val_str in ("true", "1", "yes", "on", "enabled"):
+            return True
+        return True
+
+    # Backward compat alias for update_checker
+    def _is_update_check_enabled(self) -> bool:  # pragma: no cover
+        return self.is_update_check_enabled()
+
     def get_password_hash(self) -> Optional[str]:
         value = self._get_raw("trading.password_hash")
         return str(value) if value else None
