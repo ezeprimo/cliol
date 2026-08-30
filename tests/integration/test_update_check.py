@@ -5,6 +5,7 @@ import json
 import pytest
 from typer.testing import CliRunner
 
+from cliol import __version__
 from cliol.main import app
 
 
@@ -35,7 +36,7 @@ def test_update_check_shows_table_when_newer(monkeypatch):
     result = runner.invoke(app, ["update", "check"])
     assert result.exit_code == 0
     # Should show current and latest and instruction
-    assert "0.1.4" in result.output or "current" in result.output.lower()
+    assert __version__ in result.output or "current" in result.output.lower()
     assert "0.2.0" in result.output
 
 
@@ -57,7 +58,7 @@ def test_update_check_json(monkeypatch):
     result = runner.invoke(app, ["update", "check", "--json"])
     assert result.exit_code == 0
     data = json.loads(result.output)
-    assert data["current"] == "0.1.4"
+    assert data["current"] == __version__
     assert data["latest"] == "0.2.0"
     assert data["update_available"] is True
     # No banner on stderr (result.output includes both? CliRunner captures combined? We check not banner)
@@ -162,7 +163,7 @@ def test_trunk_tty_banner_to_stderr(monkeypatch, tmp_path):
     update_checker.check_and_notify()
     assert captured.get("called") is True
     assert "Update available" in captured.get("text", "")
-    assert "0.1.4" in captured.get("text", "") or "0.1.4" in str(captured)
+    assert __version__ in captured.get("text", "") or __version__ in str(captured)
     assert "0.2.0" in captured.get("text", "")
 
 
