@@ -236,6 +236,32 @@ If the user asks to trade:
 3. After user sets password and enables, retry the trading command
 4. The user WILL be prompted for their spending password — wait for them to type it
 
+## Update Notifications
+
+`cliol` may print a single unified update banner to **stderr only** (never stdout) when a newer version is available. The banner is **trunk-only** and **json-safe**:
+
+- Shown only on TTY trunk commands (e.g., `setup`, `auth test`, `market quote`, `market data`, `portfolio show`, `account status`, `operations list`, `fci list`, `config list`) and only if `sys.stderr.isatty()`, not in CI (`CI`/`GITHUB_ACTIONS`/`TERM=dumb`), and without `--json`/`--csv`.
+- Never on `--help`/`--version`, `CLIOL_NO_UPDATE_CHECK=1`, or when `updates.check=false` (alias `update_check.enabled=false`).
+- Message is unified: `Update available: <current> -> <latest>` + `curl -fsSL https://raw.githubusercontent.com/ezeprimo/cliol/main/install.sh | bash` or `pip install -U cliol` + releases URL. It preserves exit codes 0-5 and never pollutes `--json`/`--csv` output.
+- Cache at `platformdirs.user_cache_dir("cliol")/update_cache.json` (fallback `~/.config/cliol/.update_cache.json`) with 24h throttle, atomic write 0600, dir 0700; corrupt cache is silently ignored.
+
+Agent MAY check for updates explicitly:
+
+```bash
+# Human-readable check (exit 0, or exit 2 on network failure)
+cliol update check
+
+# JSON for agents (exit 0 on success, exit 2 on fetch failure)
+cliol update check --json
+# -> {"current": "0.1.4", "latest": "0.2.0", "update_available": true}
+
+# Force refresh ignoring 24h cache
+cliol update check --json --force
+cliol update check --force
+```
+
+Opt-out: `CLIOL_NO_UPDATE_CHECK=1` (or `true`) or `cliol config set updates.check false` (alias `update_check.enabled`). Uninstall (`uninstall.sh --force`, `uninstall.ps1 -Force`) removes both cache paths best-effort.
+
 ## Important Notes
 
 - Markets: bCBA (BCBA), nYSE, nASDAQ, aMEX, bCS, rOFX

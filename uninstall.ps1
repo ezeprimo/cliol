@@ -34,4 +34,25 @@ if ((Test-Path $InstallDir) -and (-not (Get-ChildItem $InstallDir))) {
   else { Remove-Item $InstallDir -Force; Write-Host "  [removed] empty directory $InstallDir" -ForegroundColor Green }
 }
 
+# Remove update cache (primary + fallback) best-effort
+try {
+  $cachePrimary = python -c "import platformdirs; print(platformdirs.user_cache_dir('cliol'))" 2>$null
+} catch { $cachePrimary = $null }
+if (-not $cachePrimary) {
+  $cachePrimary = Join-Path $env:LOCALAPPDATA "cliol"
+  if (-not $cachePrimary -or $cachePrimary -eq "cliol") { $cachePrimary = "$env:LOCALAPPDATA\cliol" }
+}
+$cacheFilePrimary = Join-Path $cachePrimary "update_cache.json"
+$cacheFileFallback = Join-Path $HOME ".config\cliol\.update_cache.json"
+# Also consider LOCALAPPDATA fallback explicitly
+$cacheFiles = @($cacheFilePrimary, $cacheFileFallback) | Select-Object -Unique
+foreach ($c in $cacheFiles) {
+  if (Test-Path -LiteralPath $c) {
+    if ($DryRun) { Write-Host "  [dry-run] would remove cache $c" -ForegroundColor Magenta }
+    else { Remove-Item -LiteralPath $c -Force -ErrorAction SilentlyContinue; Write-Host "  [removed] cache $c" -ForegroundColor Green }
+  } else {
+    Write-Host "  [absent]  $c (cache)" -ForegroundColor Gray
+  }
+}
+
 Write-Host ""; Write-Host "To reinstall: irm https://raw.githubusercontent.com/$Repo/main/install.ps1 | iex"
