@@ -34,7 +34,7 @@ VERSION_MESSAGE = f"cliol {__version__}"
 app = typer.Typer(
     help="CLI para operar en Invertir Online desde la terminal.",
     no_args_is_help=True,
-    add_completion=True,
+    add_completion=False,
 )
 
 
