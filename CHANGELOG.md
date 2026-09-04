@@ -5,6 +5,11 @@ All notable changes to cliol will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.6] - 2026-09-03
+
+### Fixed
+- Hide `--install-completion` and `--show-completion` from `cliol --help` (`add_completion=False` in `cliol/main.py`) so only `--version` and `--help` remain in Options; no regression in commands (#21).
+
 ## [0.1.5] - 2026-08-30
 
 ### Added
@@ -65,6 +70,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - AI agent skill documentation at skills/cliol-skill/SKILL.md
 - CI/CD pipeline: GitHub Actions for lint, test matrix, build verification, release
 
+[0.1.6]: https://github.com/ezeprimo/cliol/releases/tag/v0.1.6
 [0.1.5]: https://github.com/ezeprimo/cliol/releases/tag/v0.1.5
 [0.1.4]: https://github.com/ezeprimo/cliol/releases/tag/v0.1.4
 [0.1.3]: https://github.com/ezeprimo/cliol/releases/tag/v0.1.3
